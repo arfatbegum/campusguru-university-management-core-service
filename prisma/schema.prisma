@@ -11,19 +11,20 @@ datasource db {
 }
 
 model AcademicSemester {
-  id                        String                      @id @default(uuid())
-  year                      Int
-  title                     String
-  code                      String
-  startMonth                String
-  endMonth                  String
-  createdAt                 DateTime                    @default(now())
-  updatedAt                 DateTime                    @updatedAt
-  students                  Student[]
-  SemesterRegistration      SemesterRegistration[]
-  StudentEnrolledCourse     StudentEnrolledCourse[]
-  StudentEnrolledCourseMark StudentEnrolledCourseMark[]
-  StudentSemesterPayment    StudentSemesterPayment[]
+  id                         String                      @id @default(uuid())
+  year                       Int
+  title                      String
+  code                       String
+  startMonth                 String
+  endMonth                   String
+  isCurrent                  Boolean?                    @default(false)
+  createdAt                  DateTime                    @default(now())
+  updatedAt                  DateTime                    @updatedAt
+  students                   Student[]
+  semesterRegistrations      SemesterRegistration[]
+  studentEnrolledCourses     StudentEnrolledCourse[]
+  studentEnrolledCourseMarks StudentEnrolledCourseMark[]
+  studentSemesterPayments    StudentSemesterPayment[]
 
   @@map("academic_semesters")
 }
