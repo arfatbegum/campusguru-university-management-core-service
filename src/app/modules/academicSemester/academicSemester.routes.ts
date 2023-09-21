@@ -11,6 +11,7 @@ router.get('/:id', AcademicSemeterController.getAcademicSemesterById)
 router.post(
     '/',
     validateRequest(AcademicSemesterValidation.create),
+    auth(ENUM_USER_ROLE.ADMIN, ENUM_USER_ROLE.SUPER_ADMIN),
     AcademicSemeterController.createAcademicSemester
 )
 
