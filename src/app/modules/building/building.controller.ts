@@ -17,7 +17,6 @@ const createBuilding = catchAsync(async (req: Request, res: Response) => {
 })
 
 const getAllBuilding = catchAsync(async (req: Request, res: Response) => {
-    console.log(req.query)
     const filters = pick(req.query, buildingFilterableFields);
     const options = pick(req.query, ['limit', 'page', 'sortBy', 'sortOrder']);
     const result = await BuildingService.getAllBuilding(filters, options);
