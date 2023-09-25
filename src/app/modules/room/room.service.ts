@@ -5,11 +5,15 @@ import { IGenericResponse } from '../../../interfaces/common';
 import { IPaginationOptions } from '../../../interfaces/pagination';
 import prisma from '../../../shared/prisma';
 import {
+    EVENT_ROOM_CREATED,
+    EVENT_ROOM_DELETED,
+    EVENT_ROOM_UPDATED,
     roomRelationalFields,
     roomRelationalFieldsMapper,
     roomSearchableFields
 } from './room.constants';
 import { IRoomFilterRequest } from './room.interface';
+import { RedisClient } from '../../../shared/redis';
 
 
 const createRoom = async (data: Room): Promise<Room> => {
@@ -19,6 +23,9 @@ const createRoom = async (data: Room): Promise<Room> => {
             building: true
         }
     });
+    if (result) {
+        await RedisClient.publish(EVENT_ROOM_CREATED, JSON.stringify(result))
+    }
     return result;
 };
 
@@ -115,6 +122,9 @@ const updateRoom = async (id: string, payload: Partial<Room>): Promise<Room> => 
             building: true
         }
     });
+    if (result) {
+        await RedisClient.publish(EVENT_ROOM_UPDATED, JSON.stringify(result))
+    }
     return result;
 };
 
@@ -127,6 +137,9 @@ const deleteRoom = async (id: string): Promise<Room> => {
             building: true
         }
     });
+    if (result) {
+        await RedisClient.publish(EVENT_ROOM_DELETED, JSON.stringify(result))
+    }
     return result;
 };
 
