@@ -6,8 +6,14 @@ import { paginationHelpers } from '../../../helpers/paginationHelper';
 import { IGenericResponse } from '../../../interfaces/common';
 import { IPaginationOptions } from '../../../interfaces/pagination';
 import prisma from '../../../shared/prisma';
+import { RedisClient } from '../../../shared/redis';
 import { asyncForEach } from '../../../shared/utils';
-import { courseSearchableFields } from './course.constants';
+import {
+  EVENT_COURSE_CREATED,
+  EVENT_COURSE_DELETED,
+  EVENT_COURSE_UPDATED,
+  courseSearchableFields,
+} from './course.constants';
 import {
   ICourseCreateData,
   ICourseFilterRequest,
@@ -40,6 +46,9 @@ const createCourse = async (data: ICourseCreateData): Promise<any> => {
           console.log(createPrerequisite);
         }
       );
+    }
+    if (result) {
+      await RedisClient.publish(EVENT_COURSE_CREATED, JSON.stringify(result));
     }
     return result;
   });
@@ -219,7 +228,9 @@ const updateCourse = async (
         }
       );
     }
-
+    if (result) {
+      await RedisClient.publish(EVENT_COURSE_UPDATED, JSON.stringify(result));
+    }
     return result;
   });
 
@@ -263,6 +274,9 @@ const deleteCourse = async (id: string): Promise<Course> => {
       id,
     },
   });
+  if (result) {
+    await RedisClient.publish(EVENT_COURSE_DELETED, JSON.stringify(result));
+  }
   return result;
 };
 
