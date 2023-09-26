@@ -6,8 +6,9 @@ import { paginationHelpers } from '../../../helpers/paginationHelper';
 import { IGenericResponse } from '../../../interfaces/common';
 import { IPaginationOptions } from '../../../interfaces/pagination';
 import prisma from '../../../shared/prisma';
-import { studentEnrolledCourseRelationalFields, studentEnrolledCourseRelationalFieldsMapper, studentEnrolledCourseSearchableFields } from './studentEnrolledCourse.constants';
+import { EVENT_STUDENT_ENROLLED_COURSE_CREATED, EVENT_STUDENT_ENROLLED_COURSE_DELETED, EVENT_STUDENT_ENROLLED_COURSE_UPDATED, studentEnrolledCourseRelationalFields, studentEnrolledCourseRelationalFieldsMapper, studentEnrolledCourseSearchableFields } from './studentEnrolledCourse.constants';
 import { IStudentEnrolledCourseFilterRequest } from './studentEnrolledCourse.interface';
+import { RedisClient } from '../../../shared/redis';
 
 const createStudentEnrolledCourse = async (data: StudentEnrolledCourse): Promise<StudentEnrolledCourse> => {
 
@@ -45,7 +46,12 @@ const createStudentEnrolledCourse = async (data: StudentEnrolledCourse): Promise
             course: true
         }
     });
-
+    if (result) {
+        await RedisClient.publish(
+          EVENT_STUDENT_ENROLLED_COURSE_CREATED,
+          JSON.stringify(result)
+        );
+      }
     return result;
 };
 
@@ -164,6 +170,14 @@ const updateStudentEnrolledCourse = async (
             course: true
         }
     });
+
+    if (result) {
+        await RedisClient.publish(
+          EVENT_STUDENT_ENROLLED_COURSE_UPDATED,
+          JSON.stringify(result)
+        );
+    }
+    
     return result;
 };
 
@@ -178,6 +192,14 @@ const deleteStudentEnrolledCourse = async (id: string): Promise<StudentEnrolledC
             course: true
         }
     });
+
+    if (result) {
+        await RedisClient.publish(
+          EVENT_STUDENT_ENROLLED_COURSE_DELETED,
+          JSON.stringify(result)
+        );
+    }
+    
     return result;
 };
 
