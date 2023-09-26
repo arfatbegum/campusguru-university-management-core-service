@@ -75,4 +75,4 @@ router.post(
 )
 
 
-export const semesterRegistrationRoutes = router;
+export const SemesterRegistrationRoutes = router;

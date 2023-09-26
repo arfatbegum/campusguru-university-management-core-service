@@ -7,7 +7,6 @@ import { courseFilterableFields } from "./course.constants";
 import { CourseService } from "./course.service";
 
 const createCourse = catchAsync(async (req: Request, res: Response) => {
-    //console.log(req.body)
     const result = await CourseService.createCourse(req.body);
     sendResponse(res, {
         statusCode: httpStatus.OK,

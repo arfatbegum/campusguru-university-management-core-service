@@ -3,11 +3,13 @@ import { AcademicDepartmentRoutes } from '../modules/academicDepartment/academic
 import { AcademicFacultyRoutes } from '../modules/academicFaculty/academicFaculty.routes';
 import { AcademicSemeterRoutes } from '../modules/academicSemester/academicSemester.routes';
 import { BuildingRoutes } from '../modules/building/building.routes';
+import { CourseRoutes } from '../modules/course/course.routes';
 import { FacultyRoutes } from '../modules/faculty/faculty.routes';
 import { OfferedCourseRoutes } from '../modules/offeredCourse/offeredCourse.routes';
 import { OfferedCourseClassScheduleRoutes } from '../modules/offeredCourseClassSchedule/offeredCourseClassSchedule.routes';
 import { OfferedCourseSectionRoutes } from '../modules/offeredCourseSection/offeredCourseSection.routes';
 import { RoomRoutes } from '../modules/room/room.routes';
+import { SemesterRegistrationRoutes } from '../modules/semesterRegistration/semesterRegistration.routes';
 import { StudentRoutes } from '../modules/student/student.routes';
 
 const router = express.Router();
@@ -42,20 +44,28 @@ const moduleRoutes = [
     routes: RoomRoutes,
   },
   {
+    path: '/courses',
+    routes: CourseRoutes,
+  },
+  {
+    path: '/semester-registrations',
+    routes: SemesterRegistrationRoutes,
+  },
+  {
     path: '/offered-courses',
-    route: OfferedCourseRoutes,
+    routes: OfferedCourseRoutes,
   },
   {
     path: '/offered-course-sections',
-    route: OfferedCourseSectionRoutes,
+    routes: OfferedCourseSectionRoutes,
   },
   {
     path: '/offered-course-class-schedules',
-    route: OfferedCourseClassScheduleRoutes,
+    routes: OfferedCourseClassScheduleRoutes,
   },
 ];
 
-moduleRoutes.forEach((route) => {
+moduleRoutes.forEach(route => {
   if (route.routes) {
     router.use(route.path, route.routes);
   }
