@@ -8,8 +8,9 @@ import { IPaginationOptions } from "../../../interfaces/pagination";
 import prisma from "../../../shared/prisma";
 import { asyncForEach } from "../../../shared/utils";
 import { OfferedCourseClassScheduleUtils } from "../offeredCourseClassSchedule/offeredCourseClassSchedule.utils";
-import { offeredCourseSectionRelationalFields, offeredCourseSectionRelationalFieldsMapper, offeredCourseSectionSearchableFields } from "./offeredCourseSection.constants";
+import { EVENT_OFFERED_COURSE_SECTIONS_CREATED, EVENT_OFFERED_COURSE_SECTIONS_DELETED, EVENT_OFFERED_COURSE_SECTIONS_UPDATED, offeredCourseSectionRelationalFields, offeredCourseSectionRelationalFieldsMapper, offeredCourseSectionSearchableFields } from "./offeredCourseSection.constants";
 import { IClassSchedule, IOfferedCourseSectionCreate, IOfferedCourseSectionFilterRequest } from "./offeredCourseSection.interface";
+import { RedisClient } from "../../../shared/redis";
 
 const createOfferedCourseSection = async (payload: IOfferedCourseSectionCreate): Promise<OfferedCourseSection | null> => {
 
@@ -92,7 +93,9 @@ const createOfferedCourseSection = async (payload: IOfferedCourseSectionCreate):
             }
         }
     });
-
+    if (result) {
+        await RedisClient.publish(EVENT_OFFERED_COURSE_SECTIONS_CREATED, JSON.stringify(result));
+      }
     return result;
 };
 
@@ -205,6 +208,9 @@ const updateOfferedCourseSection = async (
             }
         }
     });
+    if (result) {
+        await RedisClient.publish(EVENT_OFFERED_COURSE_SECTIONS_UPDATED, JSON.stringify(result));
+      }
     return result;
 };
 
@@ -221,6 +227,9 @@ const deleteOfferedCourseSection = async (id: string): Promise<OfferedCourseSect
             }
         }
     });
+    if (result) {
+        await RedisClient.publish(EVENT_OFFERED_COURSE_SECTIONS_DELETED, JSON.stringify(result));
+      }
     return result;
 };
 

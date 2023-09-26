@@ -25,3 +25,7 @@ export const daysInWeek = [
     'THURSDAY',
     'FRIDAY'
 ];
+
+export const EVENT_OFFERED_COURSE_SECTIONS_CREATED = 'offered-course-sections.created'
+export const EVENT_OFFERED_COURSE_SECTIONS_UPDATED = 'offered-course-sections.updated'
+export const EVENT_OFFERED_COURSE_SECTIONS_DELETED = 'offered-course-sections.deleted'
