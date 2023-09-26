@@ -5,8 +5,9 @@ import { IGenericResponse } from "../../../interfaces/common";
 import { IPaginationOptions } from "../../../interfaces/pagination";
 import prisma from "../../../shared/prisma";
 import { asyncForEach } from "../../../shared/utils";
-import { offeredCourseRelationalFields, offeredCourseRelationalFieldsMapper, offeredCourseSearchableFields } from "./offeredCourse.constants";
+import { EVENT_OFFERED_COURSE_CREATED, EVENT_OFFERED_COURSE_DELETED, EVENT_OFFERED_COURSE_UPDATED, offeredCourseRelationalFields, offeredCourseRelationalFieldsMapper, offeredCourseSearchableFields } from "./offeredCourse.constants";
 import { ICreateOfferedCourse, IOfferedCourseFilterRequest } from "./offeredCourse.interface";
+import { RedisClient } from "../../../shared/redis";
 
 const createOfferedCourse = async (data: ICreateOfferedCourse): Promise<OfferedCourse[]> => {
     const { academicDepartmentId, semesterRegistrationId, courseIds } = data;
@@ -38,7 +39,9 @@ const createOfferedCourse = async (data: ICreateOfferedCourse): Promise<OfferedC
             result.push(insertOfferedCourse)
         }
     })
-
+    if (result) {
+        await RedisClient.publish(EVENT_OFFERED_COURSE_CREATED, JSON.stringify(result));
+      }
     return result;
 }
 
@@ -144,6 +147,9 @@ const updateOfferedCourse = async (
             academicDepartment: true
         }
     });
+    if (result) {
+        await RedisClient.publish(EVENT_OFFERED_COURSE_UPDATED, JSON.stringify(result));
+      }
     return result;
 };
 
@@ -158,6 +164,9 @@ const deleteOfferedCourse = async (id: string): Promise<OfferedCourse> => {
             academicDepartment: true
         }
     });
+    if (result) {
+        await RedisClient.publish(EVENT_OFFERED_COURSE_DELETED, JSON.stringify(result));
+      }
     return result;
 };
 

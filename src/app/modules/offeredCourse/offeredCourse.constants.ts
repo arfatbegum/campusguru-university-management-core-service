@@ -18,3 +18,7 @@ export const offeredCourseRelationalFieldsMapper: { [key: string]: string } = {
     courseId: 'course',
     academicDepartmentId: 'academicDepartment'
 };
+
+export const EVENT_OFFERED_COURSE_CREATED = 'offered-course.created'
+export const EVENT_OFFERED_COURSE_UPDATED = 'offered-course.updated'
+export const EVENT_OFFERED_COURSE_DELETED = 'offered-course.deleted'
