@@ -7,3 +7,5 @@ export const studentSemesterPaymentRelationalFieldsMapper: { [key: string]: stri
     academicSemesterId: 'academicSemester',
     studentId: 'student'
 };
+
+export const EVENT_SEMESTER_PAYMENT_CREATED = 'semester-payment.created'
