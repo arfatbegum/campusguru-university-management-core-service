@@ -5,7 +5,7 @@ import { IGenericResponse } from "../../../interfaces/common";
 import { IPaginationOptions } from "../../../interfaces/pagination";
 import prisma from "../../../shared/prisma";
 import { facultyRelationalFields, facultyRelationalFieldsMapper, facultySearchableFields } from "./faculty.constants";
-import { IFacultyFilterRequest } from "./faculty.interface";
+import { FacultyCreatedEvent, IFacultyFilterRequest } from "./faculty.interface";
 
 const createFaculty = async (data: Faculty): Promise<Faculty> => {
     const result = await prisma.faculty.create({
@@ -91,9 +91,9 @@ const getAllFaculty = async (
 };
 
 const getFaculty = async (id: string): Promise<Faculty | null> => {
-    const result = await prisma.faculty.findUnique({
+    const result = await prisma.faculty.findFirst({
         where: {
-            id
+            facultyId: id
         },
         include: {
             academicFaculty: true,
@@ -261,6 +261,61 @@ const myCourses = async (
     return couseAndSchedule;
 };
 
+const createFacultyFromEvent = async (e: FacultyCreatedEvent): Promise<void> => {
+    const faculty: Partial<Faculty> = {
+        facultyId: e.id,
+        firstName: e.name.firstName,
+        lastName: e.name.lastName,
+        middleName: e.name.middleName,
+        profileImage: e.profileImage,
+        email: e.email,
+        contactNo: e.contactNo,
+        gender: e.gender,
+        bloodGroup: e.bloodGroup,
+        designation: e.designation,
+        academicDepartmentId: e.academicDepartment.syncId,
+        academicFacultyId: e.academicFaculty.syncId
+    };
+
+    const data = await createFaculty(faculty as Faculty);
+    console.log("RES: ", data);
+};
+
+const updateFacultyFromEvent = async (e: any): Promise<void> => {
+    const isExist = await prisma.faculty.findFirst({
+        where: {
+            facultyId: e.id
+        }
+    });
+    if (!isExist) {
+        createFacultyFromEvent(e);
+    }
+    else {
+        const facultyData: Partial<Faculty> = {
+            facultyId: e.id,
+            firstName: e.name.firstName,
+            lastName: e.name.lastName,
+            middleName: e.name.middleName,
+            profileImage: e.profileImage,
+            email: e.email,
+            contactNo: e.contactNo,
+            gender: e.gender,
+            bloodGroup: e.bloodGroup,
+            designation: e.designation,
+            academicDepartmentId: e.academicDepartment.syncId,
+            academicFacultyId: e.academicFaculty.syncId
+        };
+
+        const res = await prisma.faculty.updateMany({
+            where: {
+                facultyId: e.id
+            },
+            data: facultyData
+        });
+        console.log(res)
+    }
+}
+
 export const FacultyService = {
     createFaculty,
     getAllFaculty,
@@ -269,5 +324,7 @@ export const FacultyService = {
     deleteFaculty,
     assignCourses,
     removeCourses,
-    myCourses
+    myCourses,
+    createFacultyFromEvent,
+    updateFacultyFromEvent
 };
